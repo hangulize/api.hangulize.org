@@ -52,3 +52,17 @@ lang:
 
 `v1` re-implements [the original Hangulize Web API](https://pythonhosted.org/hangulize/webapi.html)
 except some unnecessary specs.
+
+## Development
+
+To run locally, use Cloud SDK:
+
+```console
+$ dev_appserver.py app.yaml
+```
+
+Or just run the `main` package:
+
+```console
+$ go run *.go
+```
