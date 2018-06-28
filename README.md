@@ -1,6 +1,6 @@
 # api.hangulize.org
 
-Web API for Hangulize
+Web API for Hangulize, powered by Google App Engine
 
 ## v2
 
