@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/sublee/hangulize2/hangulize"
+	"github.com/hangulize/hangulize"
 )
 
 func v2Init(r *gin.RouterGroup) {
