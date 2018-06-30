@@ -5,6 +5,8 @@ go:
 
 install:
 - go get -v -t ./...
+- go get github.com/gobuffalo/packr/...
+- packr -i ../hangulize
 
 script:
 - go test -v
