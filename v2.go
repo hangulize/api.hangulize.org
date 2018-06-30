@@ -71,11 +71,12 @@ func v2Specs(c *gin.Context) {
 	switch c.NegotiateFormat(gin.MIMEJSON) {
 
 	case gin.MIMEJSON:
-		specs := make(gin.H)
+		langs := hangulize.ListLangs()
+		specs := make([]*gin.H, len(langs))
 
-		for _, lang := range hangulize.ListLangs() {
+		for i, lang := range langs {
 			spec, _ := hangulize.LoadSpec(lang)
-			specs[lang] = v2PackSpec(spec)
+			specs[i] = v2PackSpec(spec)
 		}
 
 		c.JSON(http.StatusOK, gin.H{
