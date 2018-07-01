@@ -7,6 +7,12 @@ Web API for Hangulize, powered by Google App Engine
 You can find the actual API specification in [openapi.yaml](openapi.yaml) under
 OpenAPI Specification 3.0.1.
 
+There was a former Hangulize Web API written in Python. That is considered as
+`v1`. The code still can be found at https://github.com/sublee/hangulize-web.
+The `v1` API had complex content negotiation rules and not deterministic
+behaviors. `v2` is re-designed against `v1` to provide more simple and
+predictable usage.
+
 ### GET /v2/version
 
 Returns the version of the underlying Hangulize.
