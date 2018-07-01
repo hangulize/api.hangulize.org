@@ -1,4 +1,4 @@
-package main
+package v2
 
 import (
 	"net/http"
@@ -9,20 +9,20 @@ import (
 	"github.com/hangulize/hangulize"
 )
 
-func v2Init(r *gin.RouterGroup) {
-	r.GET("/version", v2Version)
-	r.GET("/hangulized/:lang/:word", v2Hangulized)
-	r.GET("/specs", v2Specs)
-	r.GET("/specs/:path", v2SpecHGL)
+// Register adds routing rules onto the given router group.
+func Register(r *gin.RouterGroup) {
+	r.GET("/version", Version)
+	r.GET("/hangulized/:lang/:word", Hangulized)
+	r.GET("/specs", Specs)
+	r.GET("/specs/:path", SpecHGL)
 }
 
-// v2Version handles: GET /version
+// Version returns the version of the "hangulize" package.
 //
-// Accept: application/json, text/plain by default
+//  Route:  GET /version
+//  Accept: text/plain (default), application/json
 //
-// It returns the version of the "hangulize" package.
-//
-func v2Version(c *gin.Context) {
+func Version(c *gin.Context) {
 	switch c.NegotiateFormat(gin.MIMEJSON) {
 
 	case gin.MIMEJSON:
@@ -35,13 +35,12 @@ func v2Version(c *gin.Context) {
 	}
 }
 
-// v2Hangulized handles: GET /hangulized/:lang/:word[?trace]
+// Hangulized transcribes a non-Korean word into Hangul.
 //
-// Accept: application/json, text/plain by default
+//  Route:  GET /hangulized/{lang}/{word}
+//  Accept: text/plain (default), application/json
 //
-// It hangulizes a word.
-//
-func v2Hangulized(c *gin.Context) {
+func Hangulized(c *gin.Context) {
 	lang := c.Param("lang")
 	word := c.Param("word")
 
@@ -61,13 +60,12 @@ func v2Hangulized(c *gin.Context) {
 	}
 }
 
-// v2Specs handles: GET /specs
+// Specs returns the list of supported specs.
 //
-// Accept: application/json, text/plain by default
+//  Route:  GET /specs
+//  Accept: text/plain (default), application/json
 //
-// It returns the list of available specs.
-//
-func v2Specs(c *gin.Context) {
+func Specs(c *gin.Context) {
 	switch c.NegotiateFormat(gin.MIMEJSON) {
 
 	case gin.MIMEJSON:
@@ -76,7 +74,7 @@ func v2Specs(c *gin.Context) {
 
 		for i, lang := range langs {
 			spec, _ := hangulize.LoadSpec(lang)
-			specs[i] = v2PackSpec(spec)
+			specs[i] = packSpec(spec)
 		}
 
 		c.JSON(http.StatusOK, gin.H{
@@ -88,7 +86,7 @@ func v2Specs(c *gin.Context) {
 	}
 }
 
-func v2PackSpec(s *hangulize.Spec) *gin.H {
+func packSpec(s *hangulize.Spec) *gin.H {
 	test := make([]gin.H, len(s.Test))
 
 	for i, example := range s.Test {
@@ -116,13 +114,12 @@ func v2PackSpec(s *hangulize.Spec) *gin.H {
 	}
 }
 
-// v2SpecHGL handles: GET /specs/:lang.hgl
+// SpecHGL serves the HGL source of the spec.
 //
-// Accept: text/vnd.hgl
+//  Route:  GET /specs/{lang}.hgl
+//  Accept: text/vnd.hgl
 //
-// It serves the HGL source of the spec.
-//
-func v2SpecHGL(c *gin.Context) {
+func SpecHGL(c *gin.Context) {
 	// Should look like "ita.hgl".
 	path := c.Param("path")
 
