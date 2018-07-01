@@ -2,9 +2,10 @@
 
 Web API for Hangulize, powered by Google App Engine
 
-## v2
+## API
 
-`v2` is the re-designed Hangulize Web API. It is much sane than `v1`.
+You can find the actual API specification in [openapi.yaml](openapi.yaml) under
+OpenAPI Specification 3.0.1.
 
 ### GET /v2/version
 
@@ -47,11 +48,6 @@ lang:
     korean  = "이탈리아어"
     script  = "latin"
 ```
-
-## v1
-
-`v1` re-implements [the original Hangulize Web API](https://pythonhosted.org/hangulize/webapi.html)
-except some unnecessary specs.
 
 ## Development
 
