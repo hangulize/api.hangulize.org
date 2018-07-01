@@ -10,7 +10,7 @@ import (
 )
 
 // Register adds routing rules onto the given router group.
-func Register(r *gin.RouterGroup) {
+func Register(r gin.IRouter) {
 	r.GET("/version", Version)
 	r.GET("/hangulized/:lang/:word", Hangulized)
 	r.GET("/specs", Specs)
