@@ -22,7 +22,7 @@ Returns the version of the underlying Hangulize.
 | `text/plain`       | `0.1.0`         |
 | `application/json` | `{"version": "0.1.0"}` |
 
-### GET /v2/hangulized/`:lang`/`:word`
+### GET /v2/hangulized/`{lang}`/`{word}`
 
 Transcribes a non-Korean word into Hangul.
 The result of `GET /v2/hangulized/ita/gloria` would be:
@@ -41,7 +41,7 @@ Provides the list of language-specific transcription specs.
 | `text/plain`       | `ita jpn deu...` |
 | `application/json` | `{"specs": [{"lang": {"id": "ita", "english": "Italian", ...}, ...]}` |
 
-### GET /v2/specs/`:lang`.hgl
+### GET /v2/specs/`{lang}`.hgl
 
 The source code of the spec.
 The only result format is `text/vnd.hgl`.
