@@ -3,18 +3,19 @@ language: go
 go:
 - '1.9.x' # Google App Engine Standard Environment supports Go 1.9.
 
-install:
-- go get -v -t ./...
-- go get github.com/gobuffalo/packr/...
-- packr -i ../hangulize
-
-script:
-- go test -v ./v2
-
 before_install:
 - openssl aes-256-cbc
   -K $encrypted_5b7fb06a6635_key -iv $encrypted_5b7fb06a6635_iv
   -in .service-account.json.enc -out .service-account.json -d
+
+install:
+- go get -v -t ./...
+
+script:
+- go test -v ./v2
+
+after_success:
+- go generate github.com/hangulize/hangulize
 
 deploy:
   provider: gae
