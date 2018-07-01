@@ -3,6 +3,8 @@ openapi: 3.0.1
 info:
   title: api.hangulize.org
   version: 0.0.0
+  license:
+    name: MIT
 
 servers:
 - url: https://api.hangulize.org/v2
@@ -17,6 +19,8 @@ paths:
           description: The Hangulize version.
           content:
             text/plain:
+              schema:
+                type: string
               example: 0.1.0
             application/json:
               schema:
@@ -24,6 +28,9 @@ paths:
                 properties:
                   version:
                     type: string
+              example: {
+                "version": "0.1.0"
+              }
 
   /hangulized/{lang}/{word}:
     get:
@@ -36,6 +43,8 @@ paths:
           description: A transcription result.
           content:
             text/plain:
+              schema:
+                type: string
               example: 글로리아
             application/json:
               schema:
@@ -47,6 +56,11 @@ paths:
                     type: string
                   transcribed:
                     type: string
+              example: {
+                "lang": "ita",
+                "word": "gloria",
+                "transcribed": "글로리아"
+              }
 
   /specs:
     get:
@@ -138,6 +152,7 @@ components:
       required: true
       schema:
         type: string
+      example: ita
     word:
       name: word
       description: Non-Korean word
@@ -145,3 +160,4 @@ components:
       required: true
       schema:
         type: string
+      example: gloria
