@@ -9,7 +9,7 @@ install:
 - packr -i ../hangulize
 
 script:
-- go test -v
+- go test -v ./v2
 
 before_install:
 - openssl aes-256-cbc
