@@ -7,7 +7,13 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/hangulize/hangulize"
+	"github.com/hangulize/hangulize/pronounce/furigana"
 )
+
+func init() {
+	// Use all pronouncers.
+	hangulize.UsePronouncer(&furigana.P)
+}
 
 // Register adds routing rules onto the given router group.
 func Register(r gin.IRouter) {
@@ -15,6 +21,7 @@ func Register(r gin.IRouter) {
 	r.GET("/specs", Specs)
 	r.GET("/specs/:path", SpecHGL)
 	r.GET("/hangulized/:lang/:word", Hangulized)
+	r.GET("/pronounced/:pronouncer/:word", Pronounced)
 }
 
 // Version returns the version of the "hangulize" package.
@@ -137,5 +144,36 @@ func Hangulized(c *gin.Context) {
 
 	default:
 		c.String(http.StatusOK, transcribed)
+	}
+}
+
+// Pronounced guesses a pronunciation from a spelling.
+//
+//  Route:  GET /pronounced/{pronouncer}/{word}
+//  Accept: text/plain (default), application/json
+//
+func Pronounced(c *gin.Context) {
+	pronouncerID := c.Param("pronouncer")
+	word := c.Param("word")
+
+	p, ok := hangulize.GetPronouncer(pronouncerID)
+	if !ok {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	pronounced := p.Pronounce(word)
+
+	switch c.NegotiateFormat(gin.MIMEJSON) {
+
+	case gin.MIMEJSON:
+		c.JSON(http.StatusOK, gin.H{
+			"pronouncer": pronouncerID,
+			"word":       word,
+			"pronounced": pronounced,
+		})
+
+	default:
+		c.String(http.StatusOK, pronounced)
 	}
 }
