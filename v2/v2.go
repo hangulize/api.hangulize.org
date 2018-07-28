@@ -12,9 +12,9 @@ import (
 // Register adds routing rules onto the given router group.
 func Register(r gin.IRouter) {
 	r.GET("/version", Version)
-	r.GET("/hangulized/:lang/:word", Hangulized)
 	r.GET("/specs", Specs)
 	r.GET("/specs/:path", SpecHGL)
+	r.GET("/hangulized/:lang/:word", Hangulized)
 }
 
 // Version returns the version of the "hangulize" package.
@@ -32,31 +32,6 @@ func Version(c *gin.Context) {
 
 	default:
 		c.String(http.StatusOK, hangulize.Version)
-	}
-}
-
-// Hangulized transcribes a non-Korean word into Hangul.
-//
-//  Route:  GET /hangulized/{lang}/{word}
-//  Accept: text/plain (default), application/json
-//
-func Hangulized(c *gin.Context) {
-	lang := c.Param("lang")
-	word := c.Param("word")
-
-	transcribed := hangulize.Hangulize(lang, word)
-
-	switch c.NegotiateFormat(gin.MIMEJSON) {
-
-	case gin.MIMEJSON:
-		c.JSON(http.StatusOK, gin.H{
-			"lang":        lang,
-			"word":        word,
-			"transcribed": transcribed,
-		})
-
-	default:
-		c.String(http.StatusOK, transcribed)
 	}
 }
 
@@ -138,4 +113,29 @@ func SpecHGL(c *gin.Context) {
 
 	c.Header("Content-Type", "text/vnd.hgl")
 	c.String(http.StatusOK, spec.Source)
+}
+
+// Hangulized transcribes a non-Korean word into Hangul.
+//
+//  Route:  GET /hangulized/{lang}/{word}
+//  Accept: text/plain (default), application/json
+//
+func Hangulized(c *gin.Context) {
+	lang := c.Param("lang")
+	word := c.Param("word")
+
+	transcribed := hangulize.Hangulize(lang, word)
+
+	switch c.NegotiateFormat(gin.MIMEJSON) {
+
+	case gin.MIMEJSON:
+		c.JSON(http.StatusOK, gin.H{
+			"lang":        lang,
+			"word":        word,
+			"transcribed": transcribed,
+		})
+
+	default:
+		c.String(http.StatusOK, transcribed)
+	}
 }
