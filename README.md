@@ -66,5 +66,5 @@ $ dev_appserver.py app.yaml
 Or just run the `main` package:
 
 ```console
-$ go run *.go
+$ go run main.go
 ```
