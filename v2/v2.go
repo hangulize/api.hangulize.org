@@ -80,11 +80,12 @@ func packSpec(s *hangulize.Spec) *gin.H {
 
 	return &gin.H{
 		"lang": gin.H{
-			"id":      s.Lang.ID,
-			"codes":   s.Lang.Codes,
-			"english": s.Lang.English,
-			"korean":  s.Lang.Korean,
-			"script":  s.Lang.Script,
+			"id":        s.Lang.ID,
+			"codes":     s.Lang.Codes,
+			"english":   s.Lang.English,
+			"korean":    s.Lang.Korean,
+			"script":    s.Lang.Script,
+			"pronounce": s.Lang.Pronounce,
 		},
 
 		"config": gin.H{
