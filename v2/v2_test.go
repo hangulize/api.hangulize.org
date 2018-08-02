@@ -55,32 +55,6 @@ func TestVersionJSON(t *testing.T) {
 	assert.Equal(t, expected, res)
 }
 
-func TestHangulizedText(t *testing.T) {
-	w := GET("/hangulized/ita/gloria", "text/plain")
-
-	assert.Equal(t, 200, w.Code)
-	assert.Contains(t, w.Header().Get("Content-Type"), "text/plain")
-
-	assert.Equal(t, "글로리아", w.Body.String())
-}
-
-func TestHangulizedJSON(t *testing.T) {
-	w := GET("/hangulized/ita/gloria", "application/json")
-
-	assert.Equal(t, 200, w.Code)
-	assert.Contains(t, w.Header().Get("Content-Type"), "application/json")
-
-	var res map[string]string
-	json.Unmarshal(w.Body.Bytes(), &res)
-
-	expected := map[string]string{
-		"lang":        "ita",
-		"word":        "gloria",
-		"transcribed": "글로리아",
-	}
-	assert.Equal(t, expected, res)
-}
-
 func TestSpecsText(t *testing.T) {
 	w := GET("/specs", "text/plain")
 
@@ -127,4 +101,30 @@ func TestSpecsJSON(t *testing.T) {
 	assert.Equal(t, firstSpec.Config.Stage, firstRes.Config.Stage)
 	assert.Equal(t, firstSpec.Test[0][0], firstRes.Test[0].Word)
 	assert.Equal(t, firstSpec.Test[0][1], firstRes.Test[0].Transcribed)
+}
+
+func TestHangulizedText(t *testing.T) {
+	w := GET("/hangulized/ita/gloria", "text/plain")
+
+	assert.Equal(t, 200, w.Code)
+	assert.Contains(t, w.Header().Get("Content-Type"), "text/plain")
+
+	assert.Equal(t, "글로리아", w.Body.String())
+}
+
+func TestHangulizedJSON(t *testing.T) {
+	w := GET("/hangulized/ita/gloria", "application/json")
+
+	assert.Equal(t, 200, w.Code)
+	assert.Contains(t, w.Header().Get("Content-Type"), "application/json")
+
+	var res map[string]string
+	json.Unmarshal(w.Body.Bytes(), &res)
+
+	expected := map[string]string{
+		"lang":        "ita",
+		"word":        "gloria",
+		"transcribed": "글로리아",
+	}
+	assert.Equal(t, expected, res)
 }
