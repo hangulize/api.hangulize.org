@@ -1,0 +1,201 @@
+openapi: 3.0.1
+
+info:
+  title: api.hangulize.org
+  version: 0.0.0
+  license:
+    name: MIT
+
+servers:
+- url: https://api.hangulize.org/v2
+  description: Production server
+
+paths:
+  /version:
+    get:
+      summary: Returns the version of the underlying Hangulize.
+      responses:
+        '200':
+          description: The Hangulize version.
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: 0.1.0
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: string
+              example: {
+                "version": "0.1.0"
+              }
+
+  /specs:
+    get:
+      summary: >-
+        Returns the list of supported language-specific transcription
+        specifications.
+      responses:
+        '200':
+          description: The spec list.
+          content:
+            text/plain:
+              example: |-
+                ita
+                deu
+                jpn
+            application/json:
+              schema:
+                type: object
+                properties:
+                  specs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Spec'
+
+  /specs/{lang}.hgl:
+    get:
+      summary: Serves the HGL source.
+      parameters:
+      - $ref: '#/components/parameters/lang'
+      responses:
+        '200':
+          description: The HGL source.
+          content:
+            text/vnd.hgl: {}
+
+  /hangulized/{lang}/{word}:
+    get:
+      summary: Transcribes a non-Korean word into Hangul.
+      parameters:
+      - $ref: '#/components/parameters/lang'
+      - $ref: '#/components/parameters/word'
+      responses:
+        '200':
+          description: A transcription result.
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: 글로리아
+            application/json:
+              schema:
+                type: object
+                properties:
+                  lang:
+                    type: string
+                  word:
+                    type: string
+                  transcribed:
+                    type: string
+              example: {
+                "lang": "ita",
+                "word": "gloria",
+                "transcribed": "글로리아"
+              }
+
+  /pronounced/{pronouncer}/{word}:
+    get:
+      summary: Guesses a pronunciation.
+      parameters:
+      - $ref: '#/components/parameters/pronouncer'
+      - $ref: '#/components/parameters/word'
+      responses:
+        '200':
+          description: A pronunciation result.
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: ニホンゴ
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pronouncer:
+                    type: string
+                  word:
+                    type: string
+                  pronounced:
+                    type: string
+              example: {
+                "pronouncer": "furigana",
+                "word": "日本語",
+                "pronounced": "ニホンゴ"
+              }
+
+components:
+  schemas:
+    Spec:
+      type: object
+      properties:
+        lang:
+          $ref: '#/components/schemas/Lang'
+        config:
+          $ref: '#/components/schemas/Config'
+        test:
+          $ref: '#/components/schemas/Test'
+
+    Lang:
+      type: object
+      properties:
+        id:
+          type: string
+        codes:
+          type: array
+          items:
+            type: string
+        english:
+          type: string
+        korean:
+          type: string
+        script:
+          type: string
+
+    Config:
+      type: object
+      properties:
+        authors:
+          type: array
+          items:
+            type: string
+        stage:
+          type: string
+
+    Test:
+      type: array
+      items:
+        type: object
+        properties:
+          word:
+            type: string
+          transcribed:
+            type: string
+
+  parameters:
+    lang:
+      name: lang
+      description: Langauge ID
+      in: path
+      required: true
+      schema:
+        type: string
+      example: ita
+    pronouncer:
+      name: pronouncer
+      description: Pronouncer ID
+      in: path
+      required: true
+      schema:
+        type: string
+      example: furigana
+    word:
+      name: word
+      description: Non-Korean word
+      in: path
+      required: true
+      schema:
+        type: string
+      example: gloria
