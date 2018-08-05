@@ -2,7 +2,7 @@ runtime: go
 api_version: go1
 
 # High memory required due to the dictionary in Kagome.
-instance_class: F4
+instance_class: F2
 
 handlers:
 - url: /.*
