@@ -15,6 +15,7 @@ func Register(r gin.IRouter) {
 	r.GET("/specs", Specs)
 	r.GET("/specs/:path", SpecHGL)
 	r.GET("/hangulized/:lang/:word", Hangulized)
+	r.GET("/pronounced/:_/:_", Pronounced)
 }
 
 // Version returns the version of the "hangulize" package.
@@ -139,4 +140,14 @@ func Hangulized(c *gin.Context) {
 	default:
 		c.String(http.StatusOK, transcribed)
 	}
+}
+
+// Pronounced guesses a pronunciation from a spelling. But each pronouncer
+// should be implemented in a separate service for cost efficiency. This
+// handler always serves the 404 error.
+//
+//  Route:  GET /pronounced/{pronouncer}/{word}
+//
+func Pronounced(c *gin.Context) {
+	c.AbortWithStatus(http.StatusNotFound)
 }
