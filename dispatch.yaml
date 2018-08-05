@@ -1,0 +1,6 @@
+dispatch:
+  - url: '*/v2/pronounced/furigana/*'
+    service: furigana
+
+  - url: '*/*'
+    service: default
