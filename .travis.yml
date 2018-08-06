@@ -19,9 +19,13 @@ before_deploy:
   - ./google-cloud-sdk/install.sh -q
 
 deploy:
-  provider: script
-  script: bash .deploy.sh
-  skip_cleanup: true
-  on:
-    tags: true
-    branch: master
+  - provider: script
+    script: bash .deploy.sh
+    skip_cleanup: true
+    on: master
+
+  - provider: script
+    script: bash .deploy.sh
+    skip_cleanup: true
+    on:
+      tags: true
