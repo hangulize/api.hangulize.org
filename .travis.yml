@@ -22,3 +22,6 @@ deploy:
   keyfile: .service-account.json
   project: hangulize-api
   default: true
+  on:
+    tags: true
+    branch: master
