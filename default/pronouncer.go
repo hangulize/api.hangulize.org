@@ -33,6 +33,7 @@ func (p *servicePronouncer) Pronounce(word string) string {
 		url.PathEscape(word),
 	)
 
+	// Fetch the pronunciation from a separate service.
 	c := urlfetch.Client(p.ctx)
 	res, err := c.Get(url)
 	if err != nil {

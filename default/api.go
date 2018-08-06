@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"google.golang.org/appengine"
 
 	"github.com/hangulize/hangulize"
 )
@@ -132,7 +133,21 @@ func Hangulized(c *gin.Context) {
 	lang := c.Param("lang")
 	word := c.Param("word")
 
-	transcribed := hangulize.Hangulize(lang, word)
+	spec, ok := hangulize.LoadSpec(lang)
+	if !ok {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	h := hangulize.NewHangulizer(spec)
+
+	pronouncer := spec.Lang.Pronouncer
+	if pronouncer != "" {
+		ctx := appengine.NewContext(c.Request)
+		h.UsePronouncer(&servicePronouncer{ctx, pronouncer})
+	}
+
+	transcribed := h.Hangulize(word)
 
 	switch c.NegotiateFormat(gin.MIMEPlain, gin.MIMEJSON) {
 
