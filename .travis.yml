@@ -3,11 +3,6 @@ language: go
 go:
 - '1.9.x' # Google App Engine Standard Environment supports Go 1.9.
 
-before_install:
-- openssl aes-256-cbc
-  -K $encrypted_5b7fb06a6635_key -iv $encrypted_5b7fb06a6635_iv
-  -in .service-account.json.enc -out .service-account.json -d
-
 install:
 - go get -v -t ./...
 
@@ -17,11 +12,16 @@ script:
 after_success:
 - go generate github.com/hangulize/hangulize
 
+before_deploy:
+  # Install Google Cloud SDK.
+  - wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-210.0.0-linux-x86_64.tar.gz
+  - tar xzf google-cloud-sdk-210.0.0-linux-x86_64.tar.gz
+  - ./google-cloud-sdk/install.sh -q
+
 deploy:
-  provider: gae
-  keyfile: .service-account.json
-  project: hangulize-api
-  default: true
+  provider: script
+  script: bash .deploy.sh
+  skip_cleanup: true
   on:
     tags: true
     branch: master
