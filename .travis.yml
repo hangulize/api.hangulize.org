@@ -12,7 +12,7 @@ install:
 - go get -v -t ./...
 
 script:
-- go test -v ./v2
+- go test -v ./...
 
 after_success:
 - go generate github.com/hangulize/hangulize
