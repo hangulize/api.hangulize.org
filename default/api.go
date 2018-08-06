@@ -24,12 +24,15 @@ func Register(r gin.IRouter) {
 //  Accept: text/plain (default), application/json
 //
 func Version(c *gin.Context) {
-	switch c.NegotiateFormat(gin.MIMEJSON) {
+	switch c.NegotiateFormat(gin.MIMEPlain, gin.MIMEJSON) {
 
 	case gin.MIMEJSON:
 		c.JSON(http.StatusOK, gin.H{
 			"version": hangulize.Version,
 		})
+
+	case gin.MIMEPlain:
+		fallthrough
 
 	default:
 		c.String(http.StatusOK, hangulize.Version)
@@ -42,7 +45,7 @@ func Version(c *gin.Context) {
 //  Accept: text/plain (default), application/json
 //
 func Specs(c *gin.Context) {
-	switch c.NegotiateFormat(gin.MIMEJSON) {
+	switch c.NegotiateFormat(gin.MIMEPlain, gin.MIMEJSON) {
 
 	case gin.MIMEJSON:
 		langs := hangulize.ListLangs()
@@ -56,6 +59,9 @@ func Specs(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"specs": specs,
 		})
+
+	case gin.MIMEPlain:
+		fallthrough
 
 	default:
 		c.String(http.StatusOK, strings.Join(hangulize.ListLangs(), "\n"))
@@ -128,7 +134,7 @@ func Hangulized(c *gin.Context) {
 
 	transcribed := hangulize.Hangulize(lang, word)
 
-	switch c.NegotiateFormat(gin.MIMEJSON) {
+	switch c.NegotiateFormat(gin.MIMEPlain, gin.MIMEJSON) {
 
 	case gin.MIMEJSON:
 		c.JSON(http.StatusOK, gin.H{
@@ -136,6 +142,9 @@ func Hangulized(c *gin.Context) {
 			"word":        word,
 			"transcribed": transcribed,
 		})
+
+	case gin.MIMEPlain:
+		fallthrough
 
 	default:
 		c.String(http.StatusOK, transcribed)

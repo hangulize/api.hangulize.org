@@ -14,7 +14,7 @@ func handler(c *gin.Context) {
 	p := &furigana.P
 	pronounced := p.Pronounce(word)
 
-	switch c.NegotiateFormat(gin.MIMEJSON) {
+	switch c.NegotiateFormat(gin.MIMEPlain, gin.MIMEJSON) {
 
 	case gin.MIMEJSON:
 		c.JSON(http.StatusOK, gin.H{
@@ -22,6 +22,9 @@ func handler(c *gin.Context) {
 			"word":       word,
 			"pronounced": pronounced,
 		})
+
+	case gin.MIMEPlain:
+		fallthrough
 
 	default:
 		c.String(http.StatusOK, pronounced)
