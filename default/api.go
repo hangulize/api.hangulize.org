@@ -1,19 +1,14 @@
-package v2
+package main
 
 import (
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"google.golang.org/appengine"
 
 	"github.com/hangulize/hangulize"
-	"github.com/hangulize/hangulize/pronounce/furigana"
 )
-
-func init() {
-	// Use all pronouncers.
-	hangulize.UsePronouncer(&furigana.P)
-}
 
 // Register adds routing rules onto the given router group.
 func Register(r gin.IRouter) {
@@ -21,7 +16,7 @@ func Register(r gin.IRouter) {
 	r.GET("/specs", Specs)
 	r.GET("/specs/:path", SpecHGL)
 	r.GET("/hangulized/:lang/:word", Hangulized)
-	r.GET("/pronounced/:pronouncer/:word", Pronounced)
+	r.GET("/pronounced/:_/:_", Pronounced)
 }
 
 // Version returns the version of the "hangulize" package.
@@ -30,12 +25,15 @@ func Register(r gin.IRouter) {
 //  Accept: text/plain (default), application/json
 //
 func Version(c *gin.Context) {
-	switch c.NegotiateFormat(gin.MIMEJSON) {
+	switch c.NegotiateFormat(gin.MIMEPlain, gin.MIMEJSON) {
 
 	case gin.MIMEJSON:
 		c.JSON(http.StatusOK, gin.H{
 			"version": hangulize.Version,
 		})
+
+	case gin.MIMEPlain:
+		fallthrough
 
 	default:
 		c.String(http.StatusOK, hangulize.Version)
@@ -48,7 +46,7 @@ func Version(c *gin.Context) {
 //  Accept: text/plain (default), application/json
 //
 func Specs(c *gin.Context) {
-	switch c.NegotiateFormat(gin.MIMEJSON) {
+	switch c.NegotiateFormat(gin.MIMEPlain, gin.MIMEJSON) {
 
 	case gin.MIMEJSON:
 		langs := hangulize.ListLangs()
@@ -62,6 +60,9 @@ func Specs(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"specs": specs,
 		})
+
+	case gin.MIMEPlain:
+		fallthrough
 
 	default:
 		c.String(http.StatusOK, strings.Join(hangulize.ListLangs(), "\n"))
@@ -80,12 +81,12 @@ func packSpec(s *hangulize.Spec) *gin.H {
 
 	return &gin.H{
 		"lang": gin.H{
-			"id":        s.Lang.ID,
-			"codes":     s.Lang.Codes,
-			"english":   s.Lang.English,
-			"korean":    s.Lang.Korean,
-			"script":    s.Lang.Script,
-			"pronounce": s.Lang.Pronounce,
+			"id":         s.Lang.ID,
+			"codes":      s.Lang.Codes,
+			"english":    s.Lang.English,
+			"korean":     s.Lang.Korean,
+			"script":     s.Lang.Script,
+			"pronouncer": s.Lang.Pronouncer,
 		},
 
 		"config": gin.H{
@@ -132,9 +133,23 @@ func Hangulized(c *gin.Context) {
 	lang := c.Param("lang")
 	word := c.Param("word")
 
-	transcribed := hangulize.Hangulize(lang, word)
+	spec, ok := hangulize.LoadSpec(lang)
+	if !ok {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
 
-	switch c.NegotiateFormat(gin.MIMEJSON) {
+	h := hangulize.NewHangulizer(spec)
+
+	pronouncer := spec.Lang.Pronouncer
+	if pronouncer != "" {
+		ctx := appengine.NewContext(c.Request)
+		h.UsePronouncer(&servicePronouncer{ctx, pronouncer})
+	}
+
+	transcribed := h.Hangulize(word)
+
+	switch c.NegotiateFormat(gin.MIMEPlain, gin.MIMEJSON) {
 
 	case gin.MIMEJSON:
 		c.JSON(http.StatusOK, gin.H{
@@ -143,38 +158,20 @@ func Hangulized(c *gin.Context) {
 			"transcribed": transcribed,
 		})
 
+	case gin.MIMEPlain:
+		fallthrough
+
 	default:
 		c.String(http.StatusOK, transcribed)
 	}
 }
 
-// Pronounced guesses a pronunciation from a spelling.
+// Pronounced guesses a pronunciation from a spelling. But each pronouncer
+// should be implemented in a separate service for cost efficiency. This
+// handler always serves the 404 error.
 //
 //  Route:  GET /pronounced/{pronouncer}/{word}
-//  Accept: text/plain (default), application/json
 //
 func Pronounced(c *gin.Context) {
-	pronouncerID := c.Param("pronouncer")
-	word := c.Param("word")
-
-	p, ok := hangulize.GetPronouncer(pronouncerID)
-	if !ok {
-		c.AbortWithStatus(http.StatusNotFound)
-		return
-	}
-
-	pronounced := p.Pronounce(word)
-
-	switch c.NegotiateFormat(gin.MIMEJSON) {
-
-	case gin.MIMEJSON:
-		c.JSON(http.StatusOK, gin.H{
-			"pronouncer": pronouncerID,
-			"word":       word,
-			"pronounced": pronounced,
-		})
-
-	default:
-		c.String(http.StatusOK, pronounced)
-	}
+	c.AbortWithStatus(http.StatusNotFound)
 }

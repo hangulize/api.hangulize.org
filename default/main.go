@@ -6,8 +6,6 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/appengine"
-
-	"github.com/hangulize/api.hangulize.org/v2"
 )
 
 func init() {
@@ -20,8 +18,8 @@ func init() {
 	// Serve openapi.yaml.
 	router.StaticFile("/openapi.yaml", "openapi.yaml")
 
-	// Route v2 API.
-	v2.Register(router.Group("/v2"))
+	// Route the API.
+	Register(router.Group("/v2"))
 }
 
 func main() {

@@ -1,4 +1,4 @@
-package v2
+package main
 
 import (
 	"encoding/json"
@@ -129,28 +129,7 @@ func TestHangulizedJSON(t *testing.T) {
 	assert.Equal(t, expected, res)
 }
 
-func TestPronouncedText(t *testing.T) {
+func TestPronounced404(t *testing.T) {
 	w := GET("/pronounced/furigana/自由ヶ丘", "text/plain")
-
-	assert.Equal(t, 200, w.Code)
-	assert.Contains(t, w.Header().Get("Content-Type"), "text/plain")
-
-	assert.Equal(t, "ジユウガオカ", w.Body.String())
-}
-
-func TestPronouncedJSON(t *testing.T) {
-	w := GET("/pronounced/furigana/自由ヶ丘", "application/json")
-
-	assert.Equal(t, 200, w.Code)
-	assert.Contains(t, w.Header().Get("Content-Type"), "application/json")
-
-	var res map[string]string
-	json.Unmarshal(w.Body.Bytes(), &res)
-
-	expected := map[string]string{
-		"pronouncer": "furigana",
-		"word":       "自由ヶ丘",
-		"pronounced": "ジユウガオカ",
-	}
-	assert.Equal(t, expected, res)
+	assert.Equal(t, 404, w.Code)
 }
