@@ -21,9 +21,9 @@ func (p *servicePronouncer) ID() string {
 }
 
 func (p *servicePronouncer) Pronounce(word string) string {
-	hostname, err := appengine.ModuleHostname(p.ctx, p.id, "", "")
+	hostname, err := appengine.ModuleHostname(p.ctx, "pronounce", "", "")
 	if err != nil {
-		log.Panicf("service hostname for %s not found", p.id)
+		log.Panicf("pronounce service hostname not found")
 	}
 
 	url := fmt.Sprintf(

@@ -4,14 +4,19 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hangulize/hangulize/pronounce/furigana"
 	"google.golang.org/appengine"
 )
 
 func handler(c *gin.Context) {
+	pID := c.Param("pronouncer")
 	word := c.Param("word")
 
-	p := &furigana.P
+	p, ok := pronouncers[pID]
+
+	if !ok {
+		c.AbortWithStatus(http.StatusNotFound)
+	}
+
 	pronounced := p.Pronounce(word)
 
 	switch c.NegotiateFormat(gin.MIMEPlain, gin.MIMEJSON) {
@@ -32,7 +37,7 @@ func handler(c *gin.Context) {
 }
 
 func register(r gin.IRouter) {
-	r.GET("/pronounced/furigana/:word", handler)
+	r.GET("/pronounced/:pronouncer/:word", handler)
 }
 
 func init() {

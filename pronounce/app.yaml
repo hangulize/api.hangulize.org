@@ -1,4 +1,4 @@
-service: furigana
+service: pronounce
 
 runtime: go
 api_version: go1

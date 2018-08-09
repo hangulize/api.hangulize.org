@@ -1,6 +1,6 @@
 dispatch:
-  - url: '*/v2/pronounced/furigana/*'
-    service: furigana
+  - url: '*/v2/pronounced/*'
+    service: pronounce
 
   - url: '*/*'
     service: default
