@@ -168,10 +168,11 @@ func Hangulized(c *gin.Context) {
 
 // Pronounced guesses a pronunciation from a spelling. But each pronouncer
 // should be implemented in a separate service for cost efficiency. This
-// handler always serves the 404 error.
+// handler always serves the 421 error.
 //
 //  Route:  GET /pronounced/{pronouncer}/{word}
 //
 func Pronounced(c *gin.Context) {
-	c.AbortWithStatus(http.StatusNotFound)
+	// 421 Misdirected Request (RFC 7540)
+	c.AbortWithStatus(421)
 }
