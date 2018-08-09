@@ -129,7 +129,7 @@ func TestHangulizedJSON(t *testing.T) {
 	assert.Equal(t, expected, res)
 }
 
-func TestPronounced404(t *testing.T) {
+func TestPronounced421(t *testing.T) {
 	w := GET("/pronounced/furigana/自由ヶ丘", "text/plain")
-	assert.Equal(t, 404, w.Code)
+	assert.Equal(t, 421, w.Code)
 }
