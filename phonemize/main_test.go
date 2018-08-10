@@ -28,8 +28,8 @@ func GET(path string, accept string) *httptest.ResponseRecorder {
 	return w
 }
 
-func TestPronouncedText(t *testing.T) {
-	w := GET("/pronounced/furigana/自由ヶ丘", "text/plain")
+func TestPhonemizedText(t *testing.T) {
+	w := GET("/phonemized/furigana/自由ヶ丘", "text/plain")
 
 	assert.Equal(t, 200, w.Code)
 	assert.Contains(t, w.Header().Get("Content-Type"), "text/plain")
@@ -37,8 +37,8 @@ func TestPronouncedText(t *testing.T) {
 	assert.Equal(t, "ジユウガオカ", w.Body.String())
 }
 
-func TestPronouncedJSON(t *testing.T) {
-	w := GET("/pronounced/furigana/自由ヶ丘", "application/json")
+func TestPhonemizedJSON(t *testing.T) {
+	w := GET("/phonemized/furigana/自由ヶ丘", "application/json")
 
 	assert.Equal(t, 200, w.Code)
 	assert.Contains(t, w.Header().Get("Content-Type"), "application/json")
@@ -47,9 +47,9 @@ func TestPronouncedJSON(t *testing.T) {
 	json.Unmarshal(w.Body.Bytes(), &res)
 
 	expected := map[string]string{
-		"pronouncer": "furigana",
+		"phonemizer": "furigana",
 		"word":       "自由ヶ丘",
-		"pronounced": "ジユウガオカ",
+		"phonemized": "ジユウガオカ",
 	}
 	assert.Equal(t, expected, res)
 }

@@ -1,4 +1,4 @@
-service: pronounce
+service: phonemize
 
 runtime: go
 api_version: go1

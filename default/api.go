@@ -16,7 +16,7 @@ func Register(r gin.IRouter) {
 	r.GET("/specs", Specs)
 	r.GET("/specs/:path", SpecHGL)
 	r.GET("/hangulized/:lang/:word", Hangulized)
-	r.GET("/pronounced/:_/:_", Pronounced)
+	r.GET("/phonemized/:_/:_", Phonemized)
 }
 
 // Version returns the version of the "hangulize" package.
@@ -86,7 +86,7 @@ func packSpec(s *hangulize.Spec) *gin.H {
 			"english":    s.Lang.English,
 			"korean":     s.Lang.Korean,
 			"script":     s.Lang.Script,
-			"pronouncer": s.Lang.Pronouncer,
+			"phonemizer": s.Lang.Phonemizer,
 		},
 
 		"config": gin.H{
@@ -141,10 +141,10 @@ func Hangulized(c *gin.Context) {
 
 	h := hangulize.NewHangulizer(spec)
 
-	pronouncer := spec.Lang.Pronouncer
-	if pronouncer != "" {
+	phonemizer := spec.Lang.Phonemizer
+	if phonemizer != "" {
 		ctx := appengine.NewContext(c.Request)
-		h.UsePronouncer(&servicePronouncer{ctx, pronouncer})
+		h.UsePhonemizer(&servicePhonemizer{ctx, phonemizer})
 	}
 
 	transcribed := h.Hangulize(word)
@@ -166,13 +166,13 @@ func Hangulized(c *gin.Context) {
 	}
 }
 
-// Pronounced guesses a pronunciation from a spelling. But each pronouncer
+// Phonemized guesses phonograms from a spelling. But each phonemizer
 // should be implemented in a separate service for cost efficiency. This
 // handler always serves the 421 error.
 //
-//  Route:  GET /pronounced/{pronouncer}/{word}
+//  Route:  GET /phonemized/{phonemizer}/{word}
 //
-func Pronounced(c *gin.Context) {
+func Phonemized(c *gin.Context) {
 	// 421 Misdirected Request (RFC 7540)
 	c.AbortWithStatus(421)
 }

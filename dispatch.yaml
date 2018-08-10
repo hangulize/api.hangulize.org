@@ -1,6 +1,6 @@
 dispatch:
-  - url: '*/v2/pronounced/*'
-    service: pronounce
+  - url: '*/v2/phonemized/*'
+    service: phonemized
 
   - url: '*/*'
     service: default

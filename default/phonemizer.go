@@ -11,33 +11,33 @@ import (
 	"google.golang.org/appengine/urlfetch"
 )
 
-type servicePronouncer struct {
+type servicePhonemizer struct {
 	ctx context.Context
 	id  string
 }
 
-func (p *servicePronouncer) ID() string {
+func (p *servicePhonemizer) ID() string {
 	return p.id
 }
 
-func (p *servicePronouncer) Pronounce(word string) string {
-	hostname, err := appengine.ModuleHostname(p.ctx, "pronounce", "", "")
+func (p *servicePhonemizer) Phonemize(word string) string {
+	hostname, err := appengine.ModuleHostname(p.ctx, "phonemize", "", "")
 	if err != nil {
-		log.Panicf("pronounce service hostname not found")
+		log.Panicf("phonemize service hostname not found")
 	}
 
 	url := fmt.Sprintf(
-		"http://%s/v2/pronounced/%s/%s",
+		"http://%s/v2/phonemized/%s/%s",
 		hostname,
 		url.PathEscape(p.id),
 		url.PathEscape(word),
 	)
 
-	// Fetch the pronunciation from a separate service.
+	// Fetch the phonograms from a separate service.
 	c := urlfetch.Client(p.ctx)
 	res, err := c.Get(url)
 	if err != nil {
-		log.Panicf("failed to get pronunciation of %s/%s: %s", p.id, word, err)
+		log.Panicf("failed to get phonograms of %s/%s: %s", p.id, word, err)
 	}
 
 	var buf bytes.Buffer

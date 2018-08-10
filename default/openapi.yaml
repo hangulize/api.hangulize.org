@@ -96,15 +96,15 @@ paths:
                 "transcribed": "글로리아"
               }
 
-  /pronounced/{pronouncer}/{word}:
+  /phonemized/{phonemizer}/{word}:
     get:
-      summary: Guesses a pronunciation.
+      summary: Guesses phonograms.
       parameters:
-      - $ref: '#/components/parameters/pronouncer'
+      - $ref: '#/components/parameters/phonemizer'
       - $ref: '#/components/parameters/word'
       responses:
         '200':
-          description: A pronunciation result.
+          description: A phonemization result.
           content:
             text/plain:
               schema:
@@ -114,16 +114,16 @@ paths:
               schema:
                 type: object
                 properties:
-                  pronouncer:
+                  phonemizer:
                     type: string
                   word:
                     type: string
-                  pronounced:
+                  phonemized:
                     type: string
               example: {
-                "pronouncer": "furigana",
+                "phonemizer": "furigana",
                 "word": "日本語",
-                "pronounced": "ニホンゴ"
+                "phonemized": "ニホンゴ"
               }
 
 components:
@@ -183,9 +183,9 @@ components:
       schema:
         type: string
       example: ita
-    pronouncer:
-      name: pronouncer
-      description: Pronouncer ID
+    phonemizer:
+      name: phonemizer
+      description: Phonemizer ID
       in: path
       required: true
       schema:

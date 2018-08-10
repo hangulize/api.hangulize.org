@@ -8,36 +8,36 @@ import (
 )
 
 func handler(c *gin.Context) {
-	pID := c.Param("pronouncer")
+	pID := c.Param("phonemizer")
 	word := c.Param("word")
 
-	p, ok := pronouncers[pID]
+	p, ok := phonemizers[pID]
 
 	if !ok {
 		c.AbortWithStatus(http.StatusNotFound)
 	}
 
-	pronounced := p.Pronounce(word)
+	phonemized := p.Phonemize(word)
 
 	switch c.NegotiateFormat(gin.MIMEPlain, gin.MIMEJSON) {
 
 	case gin.MIMEJSON:
 		c.JSON(http.StatusOK, gin.H{
-			"pronouncer": "furigana",
+			"phonemizer": "furigana",
 			"word":       word,
-			"pronounced": pronounced,
+			"phonemized": phonemized,
 		})
 
 	case gin.MIMEPlain:
 		fallthrough
 
 	default:
-		c.String(http.StatusOK, pronounced)
+		c.String(http.StatusOK, phonemized)
 	}
 }
 
 func register(r gin.IRouter) {
-	r.GET("/pronounced/:pronouncer/:word", handler)
+	r.GET("/phonemized/:phonemizer/:word", handler)
 }
 
 func init() {
