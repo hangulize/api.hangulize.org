@@ -34,7 +34,7 @@ func TestPhonemizedText(t *testing.T) {
 	assert.Equal(t, 200, w.Code)
 	assert.Contains(t, w.Header().Get("Content-Type"), "text/plain")
 
-	assert.Equal(t, "ジユウガオカ", w.Body.String())
+	assert.Equal(t, "ジユーガオカ", w.Body.String())
 }
 
 func TestPhonemizedJSON(t *testing.T) {
@@ -49,7 +49,7 @@ func TestPhonemizedJSON(t *testing.T) {
 	expected := map[string]string{
 		"phonemizer": "furigana",
 		"word":       "自由ヶ丘",
-		"phonemized": "ジユウガオカ",
+		"phonemized": "ジユーガオカ",
 	}
 	assert.Equal(t, expected, res)
 }
