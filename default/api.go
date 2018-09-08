@@ -134,6 +134,7 @@ func Hangulized(c *gin.Context) {
 	word := c.Param("word")
 
 	spec, ok := hangulize.LoadSpec(lang)
+	defer hangulize.UnloadSpec(lang)
 	if !ok {
 		c.AbortWithStatus(http.StatusNotFound)
 		return
