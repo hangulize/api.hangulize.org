@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/url"
 
-	"google.golang.org/appengine"
 	"google.golang.org/appengine/urlfetch"
 )
 
@@ -21,17 +20,16 @@ func (p *servicePhonemizer) ID() string {
 }
 
 func (p *servicePhonemizer) Phonemize(word string) string {
-	hostname, err := appengine.ModuleHostname(p.ctx, "phonemize", "", "")
-	if err != nil {
-		log.Panicf("phonemize service hostname not found")
-	}
-
-	url := fmt.Sprintf(
-		"http://%s/v2/phonemized/%s/%s",
-		hostname,
-		url.PathEscape(p.id),
-		url.PathEscape(word),
+	// The phonemizers require high memory usage at least at least 128MB.
+	// Google App Engine provides only 128MB of memory for free but Heroku
+	// provides free 512MB. To always serve api.hangulize.org in free, the
+	// phonemize service has been separated on Heroku.
+	var (
+		hostname    = "phonemize.herokuapp.com"
+		sPhonemizer = url.PathEscape(p.id)
+		sWord       = url.PathEscape(word)
 	)
+	url := fmt.Sprintf("http://%s/%s/%s", hostname, sPhonemizer, sWord)
 
 	// Fetch the phonograms from a separate service.
 	c := urlfetch.Client(p.ctx)
