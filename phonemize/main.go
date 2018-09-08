@@ -15,6 +15,7 @@ func handler(c *gin.Context) {
 
 	if !ok {
 		c.AbortWithStatus(http.StatusNotFound)
+		return
 	}
 
 	phonemized := p.Phonemize(word)
