@@ -18,8 +18,7 @@ before_script:
 - popd
 
 script:
-- go test -v ./phonemize
-- go test -v ./default
+- go test -v
 
 after_success:
 - go generate github.com/hangulize/hangulize
