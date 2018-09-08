@@ -13,19 +13,19 @@ after_success:
 - go generate github.com/hangulize/hangulize
 
 before_deploy:
-  # Install Google Cloud SDK.
-  - wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-210.0.0-linux-x86_64.tar.gz
-  - tar xzf google-cloud-sdk-210.0.0-linux-x86_64.tar.gz
-  - ./google-cloud-sdk/install.sh -q
+# Install Google Cloud SDK.
+- wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-210.0.0-linux-x86_64.tar.gz
+- tar xzf google-cloud-sdk-210.0.0-linux-x86_64.tar.gz
+- ./google-cloud-sdk/install.sh -q
 
 deploy:
-  - provider: script
-    script: bash .deploy.sh
-    skip_cleanup: true
-    on: master
+- provider: script
+  script: bash .deploy.sh
+  skip_cleanup: true
+  on: master
 
-  - provider: script
-    script: bash .deploy.sh
-    skip_cleanup: true
-    on:
-      tags: true
+- provider: script
+  script: bash .deploy.sh
+  skip_cleanup: true
+  on:
+    tags: true
