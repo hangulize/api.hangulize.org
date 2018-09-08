@@ -16,7 +16,7 @@ func Register(r gin.IRouter) {
 	r.GET("/specs", Specs)
 	r.GET("/specs/:path", SpecHGL)
 	r.GET("/hangulized/:lang/:word", Hangulized)
-	r.GET("/phonemized/:_/:_", Phonemized)
+	r.GET("/phonemized/:phonemizer/:word", Phonemized)
 }
 
 // Version returns the version of the "hangulize" package.
@@ -167,13 +167,37 @@ func Hangulized(c *gin.Context) {
 	}
 }
 
-// Phonemized guesses phonograms from a spelling. But each phonemizer
-// should be implemented in a separate service for cost efficiency. This
-// handler always serves the 421 error.
+// Phonemized guesses phonograms from a spelling.
 //
 //  Route:  GET /phonemized/{phonemizer}/{word}
 //
 func Phonemized(c *gin.Context) {
-	// 421 Misdirected Request (RFC 7540)
-	c.AbortWithStatus(421)
+	pID := c.Param("phonemizer")
+	word := c.Param("word")
+
+	ctx := appengine.NewContext(c.Request)
+	p := servicePhonemizer{ctx, pID}
+
+	phonemized, statusCode := p.PhonemizeStatusCode(word)
+
+	if statusCode != 200 {
+		c.AbortWithStatus(statusCode)
+		return
+	}
+
+	switch c.NegotiateFormat(gin.MIMEPlain, gin.MIMEJSON) {
+
+	case gin.MIMEJSON:
+		c.JSON(http.StatusOK, gin.H{
+			"phonemizer": pID,
+			"word":       word,
+			"phonemized": phonemized,
+		})
+
+	case gin.MIMEPlain:
+		fallthrough
+
+	default:
+		c.String(http.StatusOK, phonemized)
+	}
 }
