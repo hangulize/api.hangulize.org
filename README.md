@@ -22,16 +22,6 @@ Returns the version of the underlying Hangulize.
 | `text/plain`       | `0.1.0`         |
 | `application/json` | `{"version": "0.1.0"}` |
 
-### GET /v2/hangulized/`{lang}`/`{word}`
-
-Transcribes a non-Korean word into Hangul.
-The result of `GET /v2/hangulized/ita/gloria` would be:
-
-| Content-Type       | Result Example |
-| ------------------ | -------------- |
-| `text/plain`       | `글로리아`      |
-| `application/json` | `{"lang": "ita", "word": "gloria", "transcribed": "글로리아"}` |
-
 ### GET /v2/specs
 
 Provides the list of language-specific transcription specs.
@@ -55,6 +45,26 @@ lang:
     script  = "latin"
 ```
 
+### GET /v2/hangulized/`{lang}`/`{word}`
+
+Transcribes a non-Korean word into Hangul.
+The result of `GET /v2/hangulized/ita/cappuccino` would be:
+
+| Content-Type       | Result Example |
+| ------------------ | -------------- |
+| `text/plain`       | `글로리아`      |
+| `application/json` | `{"lang": "ita", "word": "cappuccino", "transcribed": "카푸치노"}` |
+
+### GET /v2/phonemized/`{phonemizer}`/`{word}`
+
+Guesses phonograms from a spelling.
+The result of `GET /v2/phonemized/furigana/東京` would be:
+
+| Content-Type       | Result Example |
+| ------------------ | -------------- |
+| `text/plain`       | `トーキョー`      |
+| `application/json` | `{"phonemizer": "furigana", "word": "東京", "phonemized": "トーキョー"}` |
+
 ## Development
 
 To run locally, use Cloud SDK:
@@ -63,8 +73,8 @@ To run locally, use Cloud SDK:
 $ dev_appserver.py app.yaml
 ```
 
-Or just run the `main` package:
+Or just build the `main` package:
 
 ```console
-$ go run main.go
+$ go build && ./api.hangulize.org
 ```
