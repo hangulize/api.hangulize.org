@@ -1,5 +1,3 @@
-service: default
-
 runtime: go
 api_version: go1
 

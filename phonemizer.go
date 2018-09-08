@@ -39,16 +39,25 @@ func (p *servicePhonemizer) URL(word string) string {
 }
 
 func (p *servicePhonemizer) Phonemize(word string) string {
+	phonemized, statusCode := p.PhonemizeStatusCode(word)
+	if statusCode != 200 {
+		log.Panicf("failed to phonemize %s/%s [%d]", p.id, word, statusCode)
+	}
+	return phonemized
+}
+
+func (p *servicePhonemizer) PhonemizeStatusCode(word string) (string, int) {
 	c := urlfetch.Client(p.ctx)
 
 	url := p.URL(word)
 	res, err := c.Get(url)
 
 	if err != nil {
-		log.Panicf("failed to phonemize %s/%s: %s", p.id, word, err)
+		return "", -1
 	}
 
 	var buf bytes.Buffer
 	buf.ReadFrom(res.Body)
-	return buf.String()
+
+	return buf.String(), res.StatusCode
 }

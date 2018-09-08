@@ -145,7 +145,14 @@ func TestHangulizedIntegratedWithPhonemize(t *testing.T) {
 	assert.Equal(t, "지유가오카", w.Body.String())
 }
 
-func TestPhonemized421(t *testing.T) {
+func TestPhonemized(t *testing.T) {
 	w := GET("/phonemized/furigana/自由ヶ丘", "text/plain")
-	assert.Equal(t, 421, w.Code)
+	assert.Equal(t, 200, w.Code)
+	assert.NotEqual(t, "", w.Body.String())
+}
+
+func TestPhonemized404(t *testing.T) {
+	w := GET("/phonemized/unknown/nwonknu", "text/plain")
+	assert.Equal(t, 404, w.Code)
+	assert.Equal(t, "", w.Body.String())
 }
