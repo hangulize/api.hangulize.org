@@ -6,17 +6,23 @@ go:
 install:
 - go get -v -t ./...
 
-script:
-- go test -v ./...
-
-after_success:
-- go generate github.com/hangulize/hangulize
-
-before_deploy:
-# Install Google Cloud SDK.
+before_script:
+# Install and activate Google Cloud SDK.
+- pushd /tmp
 - wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-210.0.0-linux-x86_64.tar.gz
 - tar xzf google-cloud-sdk-210.0.0-linux-x86_64.tar.gz
 - ./google-cloud-sdk/install.sh -q
+- source ./google-cloud-sdk/path.bash.inc
+- gcloud components install app-engine-python app-engine-go -q
+- gcloud components update -q
+- popd
+
+script:
+- go test -v ./phonemize
+- go test -v ./default
+
+after_success:
+- go generate github.com/hangulize/hangulize
 
 deploy:
 - provider: script

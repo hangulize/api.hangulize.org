@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Activate the 'gcloud' command.
-source ./google-cloud-sdk/path.bash.inc
-
 # Sign in with the service account key.
 # shellcheck disable=SC2154
 openssl aes-256-cbc \
