@@ -24,7 +24,7 @@ func handler(c *gin.Context) {
 
 	case gin.MIMEJSON:
 		c.JSON(http.StatusOK, gin.H{
-			"phonemizer": "furigana",
+			"phonemizer": pID,
 			"word":       word,
 			"phonemized": phonemized,
 		})
