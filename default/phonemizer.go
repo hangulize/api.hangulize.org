@@ -35,7 +35,7 @@ func (p *servicePhonemizer) Phonemize(word string) string {
 	c := urlfetch.Client(p.ctx)
 	res, err := c.Get(url)
 	if err != nil {
-		log.Panicf("failed to get phonograms of %s/%s: %s", p.id, word, err)
+		log.Panicf("failed to phonemize %s/%s: %s", p.id, word, err)
 	}
 
 	var buf bytes.Buffer
