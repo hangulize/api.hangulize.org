@@ -2,26 +2,33 @@ package main
 
 import (
 	"encoding/json"
-	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/appengine/aetest"
 
 	"github.com/hangulize/hangulize"
 )
 
 var router *gin.Engine
+var inst aetest.Instance
 
 func init() {
 	router = gin.New()
 	Register(router)
+
+	_inst, err := aetest.NewInstance(nil)
+	if err != nil {
+		panic(err)
+	}
+	inst = _inst
 }
 
 func GET(path string, accept string) *httptest.ResponseRecorder {
-	req, _ := http.NewRequest("GET", path, nil)
+	req, _ := inst.NewRequest("GET", path, nil)
 	req.Header.Set("Accept", accept)
 
 	w := httptest.NewRecorder()
