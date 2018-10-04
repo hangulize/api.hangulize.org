@@ -48,28 +48,28 @@ func GETWithValue(
 		req = req.WithContext(ctx)
 	}
 
-	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
-	return w
+	r := httptest.NewRecorder()
+	router.ServeHTTP(r, req)
+	return r
 }
 
 func TestVersionText(t *testing.T) {
-	w := GET("/version", "text/plain")
+	r := GET("/version", "text/plain")
 
-	assert.Equal(t, 200, w.Code)
-	assert.Contains(t, w.Header().Get("Content-Type"), "text/plain")
+	assert.Equal(t, 200, r.Code)
+	assert.Contains(t, r.Header().Get("Content-Type"), "text/plain")
 
-	assert.Equal(t, hangulize.Version, w.Body.String())
+	assert.Equal(t, hangulize.Version, r.Body.String())
 }
 
 func TestVersionJSON(t *testing.T) {
-	w := GET("/version", "application/json")
+	r := GET("/version", "application/json")
 
-	assert.Equal(t, 200, w.Code)
-	assert.Contains(t, w.Header().Get("Content-Type"), "application/json")
+	assert.Equal(t, 200, r.Code)
+	assert.Contains(t, r.Header().Get("Content-Type"), "application/json")
 
 	var res map[string]string
-	json.Unmarshal(w.Body.Bytes(), &res)
+	json.Unmarshal(r.Body.Bytes(), &res)
 
 	expected := map[string]string{
 		"version": hangulize.Version,
@@ -78,20 +78,20 @@ func TestVersionJSON(t *testing.T) {
 }
 
 func TestSpecsText(t *testing.T) {
-	w := GET("/specs", "text/plain")
+	r := GET("/specs", "text/plain")
 
-	assert.Equal(t, 200, w.Code)
-	assert.Contains(t, w.Header().Get("Content-Type"), "text/plain")
+	assert.Equal(t, 200, r.Code)
+	assert.Contains(t, r.Header().Get("Content-Type"), "text/plain")
 
 	firstLang := hangulize.ListLangs()[0]
-	assert.True(t, strings.HasPrefix(w.Body.String(), firstLang+"\n"))
+	assert.True(t, strings.HasPrefix(r.Body.String(), firstLang+"\n"))
 }
 
 func TestSpecsJSON(t *testing.T) {
-	w := GET("/specs", "application/json")
+	r := GET("/specs", "application/json")
 
-	assert.Equal(t, 200, w.Code)
-	assert.Contains(t, w.Header().Get("Content-Type"), "application/json")
+	assert.Equal(t, 200, r.Code)
+	assert.Contains(t, r.Header().Get("Content-Type"), "application/json")
 
 	var res map[string][]struct {
 		Lang struct {
@@ -112,7 +112,7 @@ func TestSpecsJSON(t *testing.T) {
 			Transcribed string
 		}
 	}
-	json.Unmarshal(w.Body.Bytes(), &res)
+	json.Unmarshal(r.Body.Bytes(), &res)
 	firstRes := res["specs"][0]
 
 	firstLang := hangulize.ListLangs()[0]
@@ -126,22 +126,22 @@ func TestSpecsJSON(t *testing.T) {
 }
 
 func TestHangulizedText(t *testing.T) {
-	w := GET("/hangulized/ita/gloria", "text/plain")
+	r := GET("/hangulized/ita/gloria", "text/plain")
 
-	assert.Equal(t, 200, w.Code)
-	assert.Contains(t, w.Header().Get("Content-Type"), "text/plain")
+	assert.Equal(t, 200, r.Code)
+	assert.Contains(t, r.Header().Get("Content-Type"), "text/plain")
 
-	assert.Equal(t, "글로리아", w.Body.String())
+	assert.Equal(t, "글로리아", r.Body.String())
 }
 
 func TestHangulizedJSON(t *testing.T) {
-	w := GET("/hangulized/ita/gloria", "application/json")
+	r := GET("/hangulized/ita/gloria", "application/json")
 
-	assert.Equal(t, 200, w.Code)
-	assert.Contains(t, w.Header().Get("Content-Type"), "application/json")
+	assert.Equal(t, 200, r.Code)
+	assert.Contains(t, r.Header().Get("Content-Type"), "application/json")
 
 	var res map[string]string
-	json.Unmarshal(w.Body.Bytes(), &res)
+	json.Unmarshal(r.Body.Bytes(), &res)
 
 	expected := map[string]string{
 		"lang":        "ita",
@@ -152,12 +152,12 @@ func TestHangulizedJSON(t *testing.T) {
 }
 
 func TestHangulizedIntegratedWithPhonemize(t *testing.T) {
-	w := GET("/hangulized/jpn/自由ヶ丘", "text/plain")
+	r := GET("/hangulized/jpn/自由ヶ丘", "text/plain")
 
-	assert.Equal(t, 200, w.Code)
-	assert.Contains(t, w.Header().Get("Content-Type"), "text/plain")
+	assert.Equal(t, 200, r.Code)
+	assert.Contains(t, r.Header().Get("Content-Type"), "text/plain")
 
-	assert.Equal(t, "지유가오카", w.Body.String())
+	assert.Equal(t, "지유가오카", r.Body.String())
 }
 
 func TestHangulizedSlash(t *testing.T) {
@@ -181,22 +181,22 @@ func TestPhonemized(t *testing.T) {
 	ps := newPhonemizeServer()
 	defer ps.Close()
 
-	w := GETWithValue(
+	r := GETWithValue(
 		"/phonemized/furigana/自由ヶ丘", "text/plain",
 		"phonemizeURL", ps.URL,
 	)
-	assert.Equal(t, 200, w.Code)
-	assert.NotEqual(t, "", w.Body.String())
+	assert.Equal(t, 200, r.Code)
+	assert.NotEqual(t, "", r.Body.String())
 }
 
 func TestPhonemized404(t *testing.T) {
 	ps := newPhonemizeServer()
 	defer ps.Close()
 
-	w := GETWithValue(
+	r := GETWithValue(
 		"/phonemized/unknown/nwonknu", "text/plain",
 		"phonemizeURL", ps.URL,
 	)
-	assert.Equal(t, 404, w.Code)
-	assert.Equal(t, "", w.Body.String())
+	assert.Equal(t, 404, r.Code)
+	assert.Equal(t, "", r.Body.String())
 }
