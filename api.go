@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -15,8 +16,8 @@ func Register(r gin.IRouter) {
 	r.GET("/version", Version)
 	r.GET("/specs", Specs)
 	r.GET("/specs/:path", SpecHGL)
-	r.GET("/hangulized/:lang/:word", Hangulized)
-	r.GET("/phonemized/:phonemizer/:word", Phonemized)
+	r.GET("/hangulized/:lang/*word", Hangulized)
+	r.GET("/phonemized/:phonemizer/*word", Phonemized)
 }
 
 // Version returns the version of the "hangulize" package.
@@ -124,6 +125,24 @@ func SpecHGL(c *gin.Context) {
 	c.String(http.StatusOK, spec.Source)
 }
 
+// paramWord picks the word argument.
+//
+// The parameter should be declared as *word.
+//
+func paramWord(c *gin.Context) string {
+	word := c.Param("word")
+
+	// Remove the initial slash.
+	word = word[1:]
+
+	unescaped, err := url.QueryUnescape(word)
+	if err != nil {
+		word = unescaped
+	}
+
+	return word
+}
+
 // Hangulized transcribes a non-Korean word into Hangul.
 //
 //  Route:  GET /hangulized/{lang}/{word}
@@ -131,7 +150,7 @@ func SpecHGL(c *gin.Context) {
 //
 func Hangulized(c *gin.Context) {
 	lang := c.Param("lang")
-	word := c.Param("word")
+	word := paramWord(c)
 
 	spec, ok := hangulize.LoadSpec(lang)
 	defer hangulize.UnloadSpec(lang)
@@ -173,7 +192,7 @@ func Hangulized(c *gin.Context) {
 //
 func Phonemized(c *gin.Context) {
 	pID := c.Param("phonemizer")
-	word := c.Param("word")
+	word := paramWord(c)
 
 	ctx := appengine.NewContext(c.Request)
 	p := servicePhonemizer{ctx, pID}
