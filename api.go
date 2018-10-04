@@ -136,7 +136,7 @@ func paramWord(c *gin.Context) string {
 	word = word[1:]
 
 	unescaped, err := url.QueryUnescape(word)
-	if err != nil {
+	if err == nil {
 		word = unescaped
 	}
 
