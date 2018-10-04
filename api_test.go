@@ -145,6 +145,11 @@ func TestHangulizedIntegratedWithPhonemize(t *testing.T) {
 	assert.Equal(t, "지유가오카", w.Body.String())
 }
 
+func TestHangulizedSlash(t *testing.T) {
+	r := GET("/hangulized/ita/gloria%2Fgloria", "text/plain")
+	assert.Equal(t, "글로리아/글로리아", r.Body.String())
+}
+
 func TestPhonemized(t *testing.T) {
 	w := GET("/phonemized/furigana/自由ヶ丘", "text/plain")
 	assert.Equal(t, 200, w.Code)
