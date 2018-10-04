@@ -191,12 +191,12 @@ func Hangulized(c *gin.Context) {
 //  Route:  GET /phonemized/{phonemizer}/{word}
 //
 func Phonemized(c *gin.Context) {
-	pID := c.Param("phonemizer")
+	phonemizerID := c.Param("phonemizer")
 	word := paramWord(c)
 
 	ctx := appengine.NewContext(c.Request)
-	p := servicePhonemizer{ctx, pID}
 
+	p := servicePhonemizer{ctx, phonemizerID}
 	phonemized, statusCode := p.PhonemizeStatusCode(word)
 
 	if statusCode != 200 {
@@ -208,7 +208,7 @@ func Phonemized(c *gin.Context) {
 
 	case gin.MIMEJSON:
 		c.JSON(http.StatusOK, gin.H{
-			"phonemizer": pID,
+			"phonemizer": phonemizerID,
 			"word":       word,
 			"phonemized": phonemized,
 		})
