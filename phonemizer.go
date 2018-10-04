@@ -31,11 +31,18 @@ func (p *servicePhonemizer) ID() string {
 
 func (p *servicePhonemizer) URL(word string) string {
 	var (
-		hostname    = "phonemize.herokuapp.com"
+		baseURL     = "http://phonemize.herokuapp.com"
 		sPhonemizer = url.PathEscape(p.id)
 		sWord       = url.PathEscape(word)
 	)
-	return fmt.Sprintf("http://%s/%s/%s", hostname, sPhonemizer, sWord)
+
+	// Override the phonemize base URL.
+	switch p.ctx.Value("phonemizeURL").(type) {
+	case string:
+		baseURL = p.ctx.Value("phonemizeURL").(string)
+	}
+
+	return fmt.Sprintf("%s/%s/%s", baseURL, sPhonemizer, sWord)
 }
 
 func (p *servicePhonemizer) Phonemize(word string) string {

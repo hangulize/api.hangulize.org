@@ -1,7 +1,10 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
+	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -27,14 +30,26 @@ func init() {
 	inst = _inst
 }
 
-func GET(path string, accept string) *httptest.ResponseRecorder {
+// GET sends a GET request.
+func GET(path, accept string) *httptest.ResponseRecorder {
+	return GETWithValue(path, accept, nil, nil)
+}
+
+// GETWithValue sends a GET request with a context value.
+func GETWithValue(
+	path, accept string,
+	key, val interface{},
+) *httptest.ResponseRecorder {
 	req, _ := inst.NewRequest("GET", path, nil)
 	req.Header.Set("Accept", accept)
 
+	if key != nil {
+		ctx := context.WithValue(req.Context(), key, val)
+		req = req.WithContext(ctx)
+	}
+
 	w := httptest.NewRecorder()
-
 	router.ServeHTTP(w, req)
-
 	return w
 }
 
@@ -150,14 +165,38 @@ func TestHangulizedSlash(t *testing.T) {
 	assert.Equal(t, "글로리아/글로리아", r.Body.String())
 }
 
+func newPhonemizeServer() *httptest.Server {
+	return httptest.NewServer(
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if strings.HasPrefix(r.URL.Path, "/furigana/") {
+				fmt.Fprintln(w, "ジユーガオカ")
+			} else {
+				w.WriteHeader(404)
+			}
+		}),
+	)
+}
+
 func TestPhonemized(t *testing.T) {
-	w := GET("/phonemized/furigana/自由ヶ丘", "text/plain")
+	ps := newPhonemizeServer()
+	defer ps.Close()
+
+	w := GETWithValue(
+		"/phonemized/furigana/自由ヶ丘", "text/plain",
+		"phonemizeURL", ps.URL,
+	)
 	assert.Equal(t, 200, w.Code)
 	assert.NotEqual(t, "", w.Body.String())
 }
 
 func TestPhonemized404(t *testing.T) {
-	w := GET("/phonemized/unknown/nwonknu", "text/plain")
+	ps := newPhonemizeServer()
+	defer ps.Close()
+
+	w := GETWithValue(
+		"/phonemized/unknown/nwonknu", "text/plain",
+		"phonemizeURL", ps.URL,
+	)
 	assert.Equal(t, 404, w.Code)
 	assert.Equal(t, "", w.Body.String())
 }
