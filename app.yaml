@@ -1,5 +1,4 @@
-runtime: go
-api_version: go1
+runtime: go112
 
 instance_class: F1
 
@@ -8,7 +7,4 @@ automatic_scaling:
   min_instances: 0
   max_idle_instances: 0
 
-handlers:
-- url: /.*
-  script: _go_app
-  secure: always
+main: .

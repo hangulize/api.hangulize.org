@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"google.golang.org/appengine"
 
 	"github.com/hangulize/hangulize"
 )
@@ -163,7 +162,7 @@ func Hangulized(c *gin.Context) {
 
 	phonemizer := spec.Lang.Phonemizer
 	if phonemizer != "" {
-		ctx := appengine.NewContext(c.Request)
+		ctx := c.Request.Context()
 		h.UsePhonemizer(&servicePhonemizer{ctx, phonemizer})
 	}
 
@@ -194,7 +193,7 @@ func Phonemized(c *gin.Context) {
 	phonemizerID := c.Param("phonemizer")
 	word := paramWord(c)
 
-	ctx := appengine.NewContext(c.Request)
+	ctx := c.Request.Context()
 
 	p := servicePhonemizer{ctx, phonemizerID}
 	phonemized, statusCode := p.PhonemizeStatusCode(word)

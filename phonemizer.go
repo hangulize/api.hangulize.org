@@ -5,9 +5,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"net/url"
-
-	"google.golang.org/appengine/urlfetch"
 )
 
 // servicePhonemizer is a phonemizer which uses a separate service.
@@ -54,10 +53,8 @@ func (p *servicePhonemizer) Phonemize(word string) string {
 }
 
 func (p *servicePhonemizer) PhonemizeStatusCode(word string) (string, int) {
-	c := urlfetch.Client(p.ctx)
-
 	url := p.URL(word)
-	res, err := c.Get(url)
+	res, err := http.Get(url)
 
 	if err != nil {
 		return "", -1
