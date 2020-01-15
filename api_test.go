@@ -11,23 +11,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"google.golang.org/appengine/aetest"
 
 	"github.com/hangulize/hangulize"
 )
 
 var router *gin.Engine
-var inst aetest.Instance
 
 func init() {
 	router = gin.New()
 	Register(router)
-
-	_inst, err := aetest.NewInstance(nil)
-	if err != nil {
-		panic(err)
-	}
-	inst = _inst
 }
 
 // GET sends a GET request.
@@ -40,7 +32,7 @@ func GETWithValue(
 	path, accept string,
 	key, val interface{},
 ) *httptest.ResponseRecorder {
-	req, _ := inst.NewRequest("GET", path, nil)
+	req, _ := http.NewRequest("GET", path, nil)
 	req.Header.Set("Accept", accept)
 
 	if key != nil {
