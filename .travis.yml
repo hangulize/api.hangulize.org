@@ -1,7 +1,7 @@
 language: go
 
 go:
-- '1.9.x' # Google App Engine Standard Environment supports Go 1.9.
+- '1.12.x' # Google App Engine Standard Environment supports Go 1.12.
 
 install:
 - go get -v -t ./...
