@@ -9,8 +9,8 @@ install:
 before_script:
 # Install and activate Google Cloud SDK.
 - pushd /tmp
-- wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-245.0.0-linux-x86_64.tar.gz
-- tar xzf google-cloud-sdk-245.0.0-linux-x86_64.tar.gz
+- wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-276.0.0-linux-x86_64.tar.gz
+- tar xzf google-cloud-sdk-276.0.0-linux-x86_64.tar.gz
 - ./google-cloud-sdk/install.sh -q
 - source ./google-cloud-sdk/path.bash.inc
 - gcloud components install app-engine-python app-engine-go -q
