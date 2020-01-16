@@ -18,6 +18,13 @@ after_success:
 before_deploy:
 - openssl aes-256-cbc -K $encrypted_5b7fb06a6635_key -iv $encrypted_5b7fb06a6635_iv -in .service-account.json.enc -out .service-account.json -d
 
+# The Google Cloud service account requires these roles:
+#
+# - App Engine Deployer
+# - App Engine Service Admin
+# - Cloud Build Service Account
+# - Storage Object Admin
+#
 deploy:
 - provider: gae
   keyfile: .service-account.json
