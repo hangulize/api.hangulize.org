@@ -19,6 +19,12 @@ func init() {
 	// Serve openapi.yaml.
 	router.StaticFile("/openapi.yaml", "openapi.yaml")
 
+	// The Warmup endpoint for Google App Engine.
+	// https://cloud.google.com/appengine/docs/standard/go/configuring-warmup-requests
+	router.GET("/_ah/warmup", func(c *gin.Context) {
+		c.String(http.StatusOK, "")
+	})
+
 	// Route the API.
 	Register(router.Group("/v2"))
 }
