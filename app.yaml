@@ -1,10 +1,14 @@
 runtime: go112
 
+main: .
+
+# [Always Free]
+
+# Only F1 instance class is qualified for Always Free.
 instance_class: F1
 
 # There are 3 scaling policies in Google App Engine. But F1 instance class
-# supports only automatic scaling. To enable Always Free, we must choose F1
-# instance class.
+# supports only automatic scaling.
 #
 # max_instances = min_instances = max_idle_instances = 1 is necessary to limit
 # the number of actual instances by 1.
@@ -15,7 +19,6 @@ automatic_scaling:
   max_idle_instances: 1
   min_idle_instances: 1
 
+# warmup is required to enable min_instances and min_idle_instances.
 inbound_services:
 - warmup
-
-main: .
